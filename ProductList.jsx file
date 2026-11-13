@@ -1,0 +1,78 @@
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem } from './CartSlice';
+
+const plantData = [
+  {
+    category: "Air Purifying Plants",
+    plants: [
+      { id: 1, name: "Snake Plant", price: 15, image: "https://via.placeholder.com/150" },
+      { id: 2, name: "Spider Plant", price: 12, image: "https://via.placeholder.com/150" },
+    ]
+  },
+  {
+    category: "Succulents",
+    plants: [
+      { id: 3, name: "Aloe Vera", price: 10, image: "https://via.placeholder.com/150" },
+      { id: 4, name: "Echeveria", price: 8, image: "https://via.placeholder.com/150" },
+    ]
+  },
+  {
+    category: "Flowering Plants",
+    plants: [
+      { id: 5, name: "Peace Lily", price: 20, image: "https://via.placeholder.com/150" },
+      { id: 6, name: "Orchid", price: 25, image: "https://via.placeholder.com/150" },
+    ]
+  }
+];
+
+const ProductList = () => {
+  const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.items);
+  const totalQuantity = useSelector(state => state.cart.totalQuantity);
+  const [addedItems, setAddedItems] = useState([]);
+
+  const handleAddToCart = (plant) => {
+    dispatch(addItem(plant));
+    setAddedItems([...addedItems, plant.id]);
+  };
+
+  return (
+    <div>
+      {/* Navbar */}
+      <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '20px', backgroundColor: '#333', color: 'white' }}>
+        <div>
+          <a href="/" style={{ color: 'white', marginRight: '15px' }}>Home</a>
+          <a href="/plants" style={{ color: 'white', marginRight: '15px' }}>Plants</a>
+          <a href="/cart" style={{ color: 'white' }}>Cart (🛒 {totalQuantity})</a>
+        </div>
+      </nav>
+
+      {/* Product List */}
+      <div style={{ padding: '20px' }}>
+        {plantData.map((category, index) => (
+          <div key={index}>
+            <h2>{category.category}</h2>
+            <div style={{ display: 'flex', gap: '20px' }}>
+              {category.plants.map(plant => (
+                <div key={plant.id} style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
+                  <img src={plant.image} alt={plant.name} style={{ width: '100px', height: '100px' }} />
+                  <h4>{plant.name}</h4>
+                  <p>${plant.price}</p>
+                  <button 
+                    onClick={() => handleAddToCart(plant)} 
+                    disabled={addedItems.includes(plant.id)}
+                  >
+                    {addedItems.includes(plant.id) ? "Added to Cart" : "Add to Cart"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ProductList;
